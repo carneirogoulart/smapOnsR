@@ -1,0 +1,15 @@
+nome;posto;variavel;valor
+sobradinho;psatsfr;kt_max;2
+sobradinho;psatsfr;kt_min;40
+sobradinho;psatmorp;kt_max;2
+sobradinho;psatmorp;kt_min;40
+sobradinho;psatboq;kt_max;2
+sobradinho;psatboq;kt_min;40
+sobradinho;psatusbr;kt_max;2
+sobradinho;psatusbr;kt_min;40
+pimentalt;psatpime;kt_max;2
+pimentalt;psatpime;kt_min;60
+pimentalt;psatbesp;kt_max;2
+pimentalt;psatbesp;kt_min;60
+pimentalt;psatbsor;kt_max;2
+pimentalt;psatbsor;kt_min;60

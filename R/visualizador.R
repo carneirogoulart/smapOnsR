@@ -42,13 +42,7 @@ executa_visualizador_calibracao <- function(){
                         ),
                         shiny::hr(),
                         shiny::fluidRow(
-                            shiny::column(4, shiny::h3("Limite Inferior"), shiny::uiOutput("li_psat")),
-                            shiny::column(3, shiny::h3("Variaveis"), shiny::uiOutput("psats")),
-                            shiny::column(4, shiny::h3("Limite Superior"), shiny::uiOutput("ls_psat"))
-                        ),
-                        shiny::hr(),
-                        shiny::fluidRow(
-                            shiny::column(4, 
+                            shiny::column(4, shiny::h3("Limite Inferior"), 
                                 shiny::numericInput(inputId = "limite_inferior_str", label = "LI str",value = NULL),
                                 shiny::numericInput(inputId = "limite_inferior_k2t", label = "LI k2t",value = NULL),
                                 shiny::numericInput(inputId = "limite_inferior_crec", label = "LI crec",value = NULL),
@@ -63,11 +57,9 @@ executa_visualizador_calibracao <- function(){
                                 shiny::numericInput(inputId = "limite_inferior_pcof", label = "LI pcof",value = NULL),
                                 shiny::numericInput(inputId = "limite_inferior_ecof", label = "LI ecof",value = NULL),
                                 shiny::numericInput(inputId = "limite_inferior_ecof2", label = "LI ecof2",value = NULL),
-                                shiny::numericInput(inputId = "limite_inferior_alfa", label = "LI alfa",value = NULL),
-                                shiny::numericInput(inputId = "limite_inferior_beta", label = "LI beta",value = NULL),
                                 shiny::numericInput(inputId = "kt_max", label = "kt max",value = NULL)
                             ),
-                            shiny::column(3,
+                            shiny::column(3, shiny::h3("Variaveis"), 
                                         shiny::numericInput(inputId = "str", label = "str",value = NULL),
                                         shiny::numericInput(inputId = "k2t", label = "k2t",value = NULL),
                                         shiny::numericInput(inputId = "crec", label = "crec",value = NULL),
@@ -82,11 +74,9 @@ executa_visualizador_calibracao <- function(){
                                         shiny::numericInput(inputId = "pcof", label = "pcof",value = NULL),
                                         shiny::numericInput(inputId = "ecof", label = "ecof",value = NULL),
                                         shiny::numericInput(inputId = "ecof2", label = "ecof2",value = NULL),
-                                        shiny::numericInput(inputId = "alfa", label = "alfa",value = NULL),
-                                        shiny::numericInput(inputId = "beta", label = "beta",value = NULL),
                                         shiny::numericInput(inputId = "kt_min", label = "kt min",value = NULL)
                             ),
-                            shiny::column(4, 
+                            shiny::column(4, shiny::h3("Limite Superior"),
                                         shiny::numericInput(inputId = "limite_superior_str", label = "LS str",value = NULL),
                                         shiny::numericInput(inputId = "limite_superior_k2t", label = "LS k2t",value = NULL),
                                         shiny::numericInput(inputId = "limite_superior_crec", label = "LS crec",value = NULL),
@@ -101,9 +91,19 @@ executa_visualizador_calibracao <- function(){
                                         shiny::numericInput(inputId = "limite_superior_pcof", label = "LS pcof",value = NULL),
                                         shiny::numericInput(inputId = "limite_superior_ecof", label = "LS ecof",value = NULL),
                                         shiny::numericInput(inputId = "limite_superior_ecof2", label = "LS ecof2",value = NULL),
-                                        shiny::numericInput(inputId = "limite_superior_alfa", label = "LS alfa",value = NULL),
-                                        shiny::numericInput(inputId = "limite_superior_beta", label = "LS beta",value = NULL)
                             ),
+                        ),
+                        shiny::hr(),
+                        shiny::fluidRow(
+                            shiny::column(4, shiny::uiOutput("li_alfa")),
+                            shiny::column(3, shiny::uiOutput("alfa")),
+                            shiny::column(4, shiny::uiOutput("ls_alfa"))
+                        ),
+                        shiny::hr(),
+                        shiny::fluidRow(
+                            shiny::column(4, shiny::uiOutput("li_beta")),
+                            shiny::column(3, shiny::uiOutput("beta")),
+                            shiny::column(4, shiny::uiOutput("ls_beta"))
                         ),
                         shiny::hr(),
                         shiny::fluidRow(
@@ -120,7 +120,7 @@ executa_visualizador_calibracao <- function(){
                             shiny::column(3,
                                 shiny::actionButton(inputId = "botao_calibracao", label = "Calibrar", class = "btn-lg btn-success"),
                                 shiny::checkboxGroupInput("variaveis", "variaveis", choices = c("Qsup1", "Qsup2", "Qplan", "Qbase")),
-                                plotly::plotlyOutput("grafico_kts")
+                                shiny::uiOutput("plots_kt")
                             ),
                             shiny::downloadButton("download_parametros", "Download parametros_sub_bacia.csv"),
                             shiny::downloadButton("download_postos_plu", "Download postos_plu_sub_bacia.csv")
@@ -165,8 +165,6 @@ executa_visualizador_calibracao <- function(){
                 shiny::updateNumericInput(session, "pcof", value = vetor_modelo[12])
                 shiny::updateNumericInput(session, "ecof", value = vetor_modelo[13])
                 shiny::updateNumericInput(session, "ecof2", value = vetor_modelo[14])
-                shiny::updateNumericInput(session, "alfa", value = vetor_modelo[15])
-                shiny::updateNumericInput(session, "beta", value = vetor_modelo[16])
                 shiny::updateNumericInput(session, "kt_max", value = kt_max)
                 shiny::updateNumericInput(session, "kt_min", value = kt_min)
 
@@ -184,8 +182,6 @@ executa_visualizador_calibracao <- function(){
                 shiny::updateNumericInput(session, "limite_inferior_pcof", value = 0.8)
                 shiny::updateNumericInput(session, "limite_inferior_ecof", value = 0.8)
                 shiny::updateNumericInput(session, "limite_inferior_ecof2", value = 0.8)
-                shiny::updateNumericInput(session, "limite_inferior_alfa", value = 0.0000001)
-                shiny::updateNumericInput(session, "limite_inferior_beta", value = 0.0000001)
 
                 shiny::updateNumericInput(session, "limite_superior_str", value = vetor_modelo[1] * 2)
                 shiny::updateNumericInput(session, "limite_superior_k2t", value = vetor_modelo[2] * 2)
@@ -201,8 +197,6 @@ executa_visualizador_calibracao <- function(){
                 shiny::updateNumericInput(session, "limite_superior_pcof", value = 1.2)
                 shiny::updateNumericInput(session, "limite_superior_ecof", value = 1.2)
                 shiny::updateNumericInput(session, "limite_superior_ecof2", value = 1.2)
-                shiny::updateNumericInput(session, "limite_superior_alfa", value = 100)
-                shiny::updateNumericInput(session, "limite_superior_beta", value = 100)
                 precipitacao <- precipitacao_posto()
                 data_minimo <- (min(precipitacao$data) + kt_min)
                 data_maximo <- (max(precipitacao$data) - kt_max)
@@ -286,6 +280,15 @@ executa_visualizador_calibracao <- function(){
             }
         })
 
+        numero_postos_plu <- shiny::reactive({
+            arquivo_postos_plu <- input$arquivo_postos_plu$datapath
+            if (!is.null(arquivo_postos_plu)) {
+                postos_plu <- postos_plu()
+                numero_postos_plu <- length(postos_plu[postos_plu$nome %in% input$sub_bacia, unique(posto)])
+                return(numero_postos_plu)
+            }
+        })
+
         vazao_observada <- shiny::reactive({
             arquivo_vazao <- input$arquivo_vazao$datapath
             if (!is.null(arquivo_vazao)) {
@@ -307,68 +310,134 @@ executa_visualizador_calibracao <- function(){
             }
         })
 
-        gera_entrada_psat <- function(num_inputs) {
+        gera_entrada_alfa <- function(num_inputs) {
             inputs <- vector("list", num_inputs)
             postos_plu <- postos_plu()
             postos_plu <- postos_plu[postos_plu$nome %in% input$sub_bacia]
             if (num_inputs > 1){
                 for (i in seq_len(num_inputs)) {
-                inputs[[i]] <- shiny::numericInput(inputId = paste0("posto_plu_", i),
-                                            label = postos_plu$posto[i],
-                                            value = postos_plu$valor[i],
-                                            min = 0,
-                                            max = 1)
+                inputs[[i]] <- shiny::numericInput(inputId = paste0("alfa_", i),
+                                            label = paste0("alfa_",unique(postos_plu$posto)[i]),
+                                            value = 0.01,
+                                            min = 0.0000001,
+                                            max = 10000000)
                 }
             } else {
-                inputs[[1]] <- shiny::numericInput(inputId = paste0("posto_plu_", 1),
-                                            label = postos_plu$posto[1],
-                                            value = postos_plu$valor[1],
-                                            min = 1,
-                                            max = 1)
+                inputs[[1]] <- shiny::numericInput(inputId = paste0("alfa_", 1),
+                                            label = paste0("alfa_",postos_plu$posto[1]),
+                                            value = 0.01,
+                                            min = 0.0000001,
+                                            max = 10000000)
             }
             return(inputs)
         }
 
-        gera_limite_inferior_psat <- function(num_inputs) {
+        gera_entrada_beta <- function(num_inputs) {
+            inputs <- vector("list", num_inputs)
+            postos_plu <- postos_plu()
+            postos_plu <- postos_plu[postos_plu$nome %in% input$sub_bacia]
+            if (num_inputs > 1){
+                for (i in seq_len(num_inputs)) {
+                inputs[[i]] <- shiny::numericInput(inputId = paste0("beta_", i),
+                                            label = paste0("beta_",unique(postos_plu$posto)[i]),
+                                            value = 0.01,
+                                            min = 0.0000001,
+                                            max = 10000000)
+                }
+            } else {
+                inputs[[1]] <- shiny::numericInput(inputId = paste0("beta_", 1),
+                                            label =  paste0("beta_",postos_plu$posto[1]),
+                                            value = 0.01,
+                                            min = 0.0000001,
+                                            max = 10000000)
+            }
+            return(inputs)
+        }
+
+        gera_limite_inferior_alfa <- function(num_inputs) {
             inputs <- vector("list", num_inputs)
             postos_plu <- postos_plu()
             postos_plu <- postos_plu[postos_plu$nome %in% input$sub_bacia]
             if (num_inputs > 1) {
             for (i in seq_len(num_inputs)) {
-                inputs[[i]] <- shiny::numericInput(inputId = paste0("limite_inferior_posto_plu_", i),
-                                            label = paste0("LI ",postos_plu$posto[i]),
-                                            value = 0,
-                                            min = 0,
-                                            max = 1)
+                inputs[[i]] <- shiny::numericInput(inputId = paste0("limite_inferior_alfa_", i),
+                                            label = paste0("LI alfa_",unique(postos_plu$posto)[i]),
+                                            value = 0.0000001,
+                                            min = 0.0000001,
+                                            max = 1000000)
                 }
             } else {
-                inputs[[1]] <- shiny::numericInput(inputId = paste0("limite_inferior_posto_plu_", 1),
-                                            label = paste0("LI ",postos_plu$posto[1]),
-                                            value = 1,
-                                            min = 1,
-                                            max = 1)
+                inputs[[1]] <- shiny::numericInput(inputId = paste0("limite_inferior_alfa_", 1),
+                                            label = paste0("LI alfa_",postos_plu$posto[1]),
+                                            value = 0.0000001,
+                                            min = 0.0000001,
+                                            max = 1000000)
             }
             return(inputs)
         }
 
-        gera_limite_superior_psat <- function(num_inputs) {
+        gera_limite_inferior_beta <- function(num_inputs) {
+            inputs <- vector("list", num_inputs)
+            postos_plu <- postos_plu()
+            postos_plu <- postos_plu[postos_plu$nome %in% input$sub_bacia]
+            if (num_inputs > 1) {
+            for (i in seq_len(num_inputs)) {
+                inputs[[i]] <- shiny::numericInput(inputId = paste0("limite_inferior_beta_", i),
+                                            label = paste0("LI beta_",unique(postos_plu$posto)[i]),
+                                            value = 0.0000001,
+                                            min = 0.0000001,
+                                            max = 1000000)
+                }
+            } else {
+                inputs[[1]] <- shiny::numericInput(inputId = paste0("limite_inferior_beta_", 1),
+                                            label = paste0("LI beta_",postos_plu$posto[1]),
+                                            value = 0.0000001,
+                                            min = 0.0000001,
+                                            max = 1000000)
+            }
+            return(inputs)
+        }
+
+        gera_limite_superior_alfa <- function(num_inputs) {
             inputs <- vector("list", num_inputs)
             postos_plu <- postos_plu()
             postos_plu <- postos_plu[postos_plu$nome %in% input$sub_bacia]
             if (num_inputs > 1) {
                 for (i in seq_len(num_inputs)) {
-                    inputs[[i]] <- shiny::numericInput(inputId = paste0("limite_superior_posto_plu_", i),
-                                            label = paste0("LS ",postos_plu$posto[i]),
-                                            value = 1,
-                                            min = 0,
-                                            max = 1)
+                    inputs[[i]] <- shiny::numericInput(inputId = paste0("limite_superior_alfa_", i),
+                                            label = paste0("LS alfa_",unique(postos_plu$posto)[i]),
+                                            value = 50,
+                                            min = 0.0000001,
+                                            max = 10000000)
                 }
             } else {
                 inputs[[1]] <- shiny::numericInput(inputId = paste0("limite_inferior_posto_plu_", 1),
-                                            label = paste0("LS ",postos_plu$posto[1]),
-                                            value = 1,
-                                            min = 1,
-                                            max = 1)
+                                            label = paste0("LS alfa_",postos_plu$posto[1]),
+                                            value = 50,
+                                            min = 0.0000001,
+                                            max = 10000000)
+            }
+            return(inputs)
+        }
+
+        gera_limite_superior_beta <- function(num_inputs) {
+            inputs <- vector("list", num_inputs)
+            postos_plu <- postos_plu()
+            postos_plu <- postos_plu[postos_plu$nome %in% input$sub_bacia]
+            if (num_inputs > 1) {
+                for (i in seq_len(num_inputs)) {
+                    inputs[[i]] <- shiny::numericInput(inputId = paste0("limite_superior_beta_", i),
+                                            label = paste0("LS beta_",unique(postos_plu$posto)[i]),
+                                            value = 50,
+                                            min = 0.0000001,
+                                            max = 10000000)
+                }
+            } else {
+                inputs[[1]] <- shiny::numericInput(inputId = paste0("limite_inferior_posto_plu_", 1),
+                                            label = paste0("LS beta_",postos_plu$posto[1]),
+                                            value = 50,
+                                            min = 0.0000001,
+                                            max = 10000000)
             }
             return(inputs)
         }
@@ -378,18 +447,30 @@ executa_visualizador_calibracao <- function(){
             arquivo_vazao <- input$arquivo_vazao$datapath
             if ((!is.null(arquivo_postos_plu)) & (!is.null(arquivo_vazao))){
                 postos_plu <- postos_plu()
-                numero_postos_plu <- nrow(postos_plu[postos_plu$nome %in% input$sub_bacia])
-                psats <- gera_entrada_psat(numero_postos_plu)
-                li_psat <- gera_limite_inferior_psat(numero_postos_plu)
-                ls_psat <- gera_limite_superior_psat(numero_postos_plu)
-                output$psats <- shiny::renderUI({
-                    psats
+                numero_postos_plu <- length(postos_plu[postos_plu$nome %in% input$sub_bacia, unique(posto)])
+                alfa <- gera_entrada_alfa(numero_postos_plu)
+                li_alfa <- gera_limite_inferior_alfa(numero_postos_plu)
+                ls_alfa <- gera_limite_superior_alfa(numero_postos_plu)
+                beta <- gera_entrada_beta(numero_postos_plu)
+                li_beta <- gera_limite_inferior_beta(numero_postos_plu)
+                ls_beta <- gera_limite_superior_beta(numero_postos_plu)
+                output$alfa <- shiny::renderUI({
+                    alfa
                 })
-                output$li_psat <- shiny::renderUI({
-                    li_psat
+                output$li_alfa <- shiny::renderUI({
+                    li_alfa
                 })
-                output$ls_psat <- shiny::renderUI({
-                    ls_psat
+                output$ls_alfa <- shiny::renderUI({
+                    ls_alfa
+                })
+                output$beta <- shiny::renderUI({
+                    beta
+                })
+                output$li_beta <- shiny::renderUI({
+                    li_beta
+                })
+                output$ls_beta <- shiny::renderUI({
+                    ls_beta
                 })
             }
         })
@@ -458,18 +539,49 @@ executa_visualizador_calibracao <- function(){
             shinyjs::toggleState(id = "botao_calibracao", condition = !disable_button())
         })
 
-        output$grafico_kts <- plotly::renderPlotly({
-            vetor_modelo <- vetor_modelo()
-            vetor_modelo[15] <- input$alfa
-            vetor_modelo[16] <- input$beta
-            kt_max <- input$kt_max
-            kt_min <- input$kt_min
+        # Dynamic UI for plotlyOutput elements
+        output$plots_kt <- shiny::renderUI({
+            numero_postos_plu <- numero_postos_plu()
             
-            kt <- cria_kt(kt_max, kt_min, vetor_modelo[15], vetor_modelo[16])
-            kt <- data.table::data.table(kt)
-            kt$lag <- 2:-60
+            plot_outputs <- lapply(1:numero_postos_plu, function(i) {
+                plotly::plotlyOutput(outputId = paste0("plot_", i))
+            })
+            
+            do.call(shiny::tagList, plot_outputs)
+        })
+        
+        # Generate and render plots based on user input
+        shiny::observe({
+            arquivo_postos_plu <- input$arquivo_postos_plu$datapath
+            if (!is.null(arquivo_postos_plu) & !is.null(input[[paste0("alfa_", 1)]])) {
+                numero_postos_plu <- numero_postos_plu()
+                lapply(1:numero_postos_plu, function(i) {
+                    alfa <- input[[paste0("alfa_", i)]]
+                    beta <- input[[paste0("beta_", i)]]
+                    numero_postos_plu <- numero_postos_plu()
+                    postos_plu <- postos_plu()
+                    soma_kt <- 0
+                    for (iposto in 1:numero_postos_plu){
+                        nome_posto <- postos_plu[, unique(posto)][iposto]
+                        kt_max <- postos_plu[posto == nome_posto & variavel == "kt_max", valor]
+                        kt_min <- postos_plu[posto == nome_posto & variavel == "kt_min", valor]
+                        kt <- cria_kt(kt_max, kt_min, input[[paste0("alfa_", iposto)]], input[[paste0("beta_", iposto)]])
+                        soma_kt <- soma_kt + kt
+                    }
+                    soma_kt <- sum(soma_kt)
 
-            plot <- plotly::plot_ly(data = kt[which(lag %in% kt_max:-kt_min)], x = ~lag, y = ~kt, name = 'Distribuicao dos Kts', type = 'scatter', mode = 'lines', height = 4, width = 4) 
+                    nome_posto <- postos_plu[, unique(posto)][i]
+                    kt_max <- postos_plu[posto == nome_posto & variavel == "kt_max", valor]
+                    kt_min <- postos_plu[posto == nome_posto & variavel == "kt_min", valor]
+                    kt <- cria_kt(kt_max, kt_min, alfa, beta)
+                    kt <- kt / soma_kt
+                    kt <- data.table::data.table(kt)
+                    kt$lag <- 2:-60
+                    output[[paste0("plot_", i)]] <- plotly::renderPlotly({
+                        plotly::plot_ly(data = kt[which(lag %in% kt_max:-kt_min)], x = ~lag, y = ~kt, name = 'Distribuicao dos Kts', type = 'scatter', mode = 'lines', height = 4, width = 4) 
+                    })
+                })
+            }
         })
 
         saida <-  shiny::reactive({
@@ -488,8 +600,6 @@ executa_visualizador_calibracao <- function(){
             vetor_modelo[12] <- input$pcof
             vetor_modelo[13] <- input$ecof
             vetor_modelo[14] <- input$ecof2
-            vetor_modelo[15] <- input$alfa
-            vetor_modelo[16] <- input$beta
             kt_max <- input$kt_max
             kt_min <- input$kt_min
             vazao <- vazao_posto()
@@ -501,24 +611,39 @@ executa_visualizador_calibracao <- function(){
             area <- area()
             postos_plu <- postos_plu()
             
-            kt <- cria_kt(kt_max, kt_min, vetor_modelo[15], vetor_modelo[16])
-            
             numero_dias <- nrow(evapotranspiracao)
             
             inicializacao <- inicializacao_smap(vetor_modelo, area, Ebin, Tuin, Supin)
             
-            numero_postos_plu <- nrow(postos_plu[postos_plu$nome == input$sub_bacia])
-            if (numero_postos_plu > 1) {
-                for (iposto in 1: numero_postos_plu){
-                    vetor_modelo[(16 + iposto)] <- input[[paste0("posto_plu_", iposto)]]
-                    postos_plu[postos_plu$nome == input$sub_bacia]$valor[iposto] <- input[[paste0("posto_plu_", iposto)]]
-                }
+            numero_postos_plu <- length(postos_plu[postos_plu$nome %in% input$sub_bacia, unique(posto)])
+
+            for (iposto in 1:numero_postos_plu){
+                vetor_modelo[(14 + (iposto * 2) - 1)] <- input[[paste0("alfa_", iposto)]]
+                vetor_modelo[(14 + (iposto * 2))] <- input[[paste0("beta_", iposto)]]
             }
 
-            precipitacao_ponderada <- ponderacao_espacial(precipitacao, postos_plu[postos_plu$nome == input$sub_bacia])
+            soma_kt <- 0
+            for (iposto in 1:numero_postos_plu){
+                nome_posto <- postos_plu[, unique(posto)][iposto]
+                kt_max <- postos_plu[posto == nome_posto & variavel == "kt_max", valor]
+                kt_min <- postos_plu[posto == nome_posto & variavel == "kt_min", valor]
+                kt <- cria_kt(kt_max, kt_min, vetor_modelo[14 + iposto * 2 - 1], vetor_modelo[14 + iposto * 2])
+                soma_kt <- soma_kt + kt
+            }
+            soma_kt <- sum(soma_kt)
 
-            precipitacao_ponderada <- precipitacao_ponderada$valor * vetor_modelo[12]
-            precipitacao_ponderada <- ponderacao_temporal(precipitacao_ponderada, kt, kt_max, kt_min)
+            precipitacao_ponderada <- 0
+            for (iposto in 1:numero_postos_plu){
+                nome_posto <- postos_plu[, unique(posto)][iposto]
+                kt_max <- postos_plu[posto == nome_posto & variavel == "kt_max", valor]
+                kt_min <- postos_plu[posto == nome_posto & variavel == "kt_min", valor]
+                kt <- cria_kt(kt_max, kt_min, vetor_modelo[14 + iposto * 2 - 1], vetor_modelo[14 + iposto * 2])
+                kt <- kt / soma_kt
+                precipitacao_posto <- ponderacao_temporal(precipitacao[posto == nome_posto, valor], kt, kt_max, kt_min)
+                precipitacao_ponderada <- precipitacao_ponderada + precipitacao_posto
+            }
+
+            precipitacao_ponderada <- precipitacao_ponderada  * vetor_modelo[12]
             
             data_inicio_simulacao <- (min(precipitacao$data) + kt_min)
             data_fim_simulacao <- (max(precipitacao$data) - kt_max)
@@ -559,7 +684,7 @@ executa_visualizador_calibracao <- function(){
             precipitacao <- precipitacao_posto()
             postos_plu <- postos_plu()
 
-            precipitacao <- ponderacao_espacial(precipitacao, postos_plu[postos_plu$nome == input$sub_bacia])
+            precipitacao <- precipitacao[precipitacao$posto == unique(precipitacao$posto)[1]]
             saida <- saida()
             saida <- data.table::melt(saida, id.vars = c("data"), variable.name = "variavel",
                                         value.name = "valor")
@@ -596,7 +721,7 @@ executa_visualizador_calibracao <- function(){
             precipitacao <- precipitacao_posto()
             postos_plu <- postos_plu()
 
-            precipitacao <- ponderacao_espacial(precipitacao, postos_plu[postos_plu$nome == input$sub_bacia])
+            precipitacao <- precipitacao[precipitacao$posto == unique(precipitacao$posto)[1]]
             saida <- saida()
             saida <- data.table::melt(saida, id.vars = c("data"), variable.name = "variavel",
                                         value.name = "valor")
@@ -644,8 +769,6 @@ executa_visualizador_calibracao <- function(){
             vetor_modelo[12] <- input$pcof
             vetor_modelo[13] <- input$ecof
             vetor_modelo[14] <- input$ecof2
-            vetor_modelo[15] <- input$alfa
-            vetor_modelo[16] <- input$beta
             data_inicio_objetivo <- input$periodo_calibracao[1]
             data_fim_objetivo <- input$periodo_calibracao[2]
             kt_max <- input$kt_max
@@ -659,15 +782,12 @@ executa_visualizador_calibracao <- function(){
             precipitacao <- precipitacao_posto()
             postos_plu <- postos_plu()
 
-            numero_postos_plu <- nrow(postos_plu[postos_plu$nome == input$sub_bacia])
-            if (numero_postos_plu > 1) {
-                for (iposto in 1: numero_postos_plu){
-                    vetor_modelo[16 + iposto] <- input[[paste0("posto_plu_", iposto)]]
-                    postos_plu[postos_plu$nome == input$sub_bacia]$valor[iposto] <- input[[paste0("posto_plu_", iposto)]]
-                }
+            numero_postos_plu <- length(postos_plu[postos_plu$nome %in% input$sub_bacia, unique(posto)])
+            
+            for (iposto in 1:numero_postos_plu){
+                vetor_modelo[(14 + (iposto * 2) - 1)] <- input[[paste0("alfa_", iposto)]]
+                vetor_modelo[(14 + (iposto * 2))] <- input[[paste0("beta_", iposto)]]
             }
-
-            vetor_modelo[17:(16 + numero_postos_plu)] <- postos_plu$valor[postos_plu$nome == input$sub_bacia]
 
             kt <- cria_kt(kt_max, kt_min, vetor_modelo[15], vetor_modelo[16])
             
@@ -703,8 +823,6 @@ executa_visualizador_calibracao <- function(){
             limite_superior[12] <- input$limite_superior_pcof
             limite_superior[13] <- input$limite_superior_ecof
             limite_superior[14] <- input$limite_superior_ecof2
-            limite_superior[15] <- input$limite_superior_alfa
-            limite_superior[16] <- input$limite_superior_beta
             
             limite_inferior <- as.numeric(rep(0, 16), c(16))
             limite_inferior[1] <- input$limite_inferior_str
@@ -721,8 +839,6 @@ executa_visualizador_calibracao <- function(){
             limite_inferior[12] <- input$limite_inferior_pcof
             limite_inferior[13] <- input$limite_inferior_ecof
             limite_inferior[14] <- input$limite_inferior_ecof2
-            limite_inferior[15] <- input$limite_inferior_alfa
-            limite_inferior[16] <- input$limite_inferior_beta
             
             vetor_modelo <- vetor_modelo()
             vetor_modelo[1] <- input$str
@@ -739,8 +855,6 @@ executa_visualizador_calibracao <- function(){
             vetor_modelo[12] <- input$pcof
             vetor_modelo[13] <- input$ecof
             vetor_modelo[14] <- input$ecof2
-            vetor_modelo[15] <- input$alfa
-            vetor_modelo[16] <- input$beta
 
             area <- area()
             Ebin <- input$Ebin
@@ -756,14 +870,16 @@ executa_visualizador_calibracao <- function(){
             evapotranspiracao <- evapotranspiracao_posto()
             precipitacao <- precipitacao_posto()
             postos_plu <- postos_plu()
-            numero_postos_plu <- nrow(postos_plu[postos_plu$nome == input$sub_bacia])
+            numero_postos_plu <- length(postos_plu[postos_plu$nome %in% input$sub_bacia, unique(posto)])
 
-            if (numero_postos_plu > 1) {
-                for (iposto in 1:numero_postos_plu){
-                    vetor_modelo[(16 + iposto)] <- input[[paste0("posto_plu_", iposto)]]
-                    limite_superior[(16 + iposto)] <- input[[paste0("limite_superior_posto_plu_", iposto)]]
-                    limite_inferior[(16 + iposto)] <- input[[paste0("limite_inferior_posto_plu_", iposto)]]
-                }
+            for (iposto in 1:numero_postos_plu){
+                vetor_modelo[(14 + (iposto * 2) - 1)] <- input[[paste0("alfa_", iposto)]]
+                limite_superior[(14 + (iposto * 2) - 1)] <- input[[paste0("limite_superior_alfa_", iposto)]]
+                limite_inferior[(14 + (iposto * 2) - 1)] <- input[[paste0("limite_inferior_alfa_", iposto)]]
+
+                vetor_modelo[(14 + (iposto * 2))] <- input[[paste0("beta_", iposto)]]
+                limite_superior[(14 + (iposto * 2))] <- input[[paste0("limite_superior_beta_", iposto)]]
+                limite_inferior[(14 + (iposto * 2))] <- input[[paste0("limite_inferior_beta_", iposto)]]
             }
 
             evapotranspiracao_fo <- data.table::data.table(evapotranspiracao[which((evapotranspiracao$data >= (min(precipitacao$data) + kt_min))
@@ -799,13 +915,10 @@ executa_visualizador_calibracao <- function(){
                 shiny::updateNumericInput(session, "pcof", value = as.numeric(future::value(par)$par[12]))
                 shiny::updateNumericInput(session, "ecof", value = as.numeric(future::value(par)$par[13]))
                 shiny::updateNumericInput(session, "ecof2", value = as.numeric(future::value(par)$par[14]))
-                shiny::updateNumericInput(session, "alfa", value = as.numeric(future::value(par)$par[15]))
-                shiny::updateNumericInput(session, "beta", value = as.numeric(future::value(par)$par[16]))
-                if (numero_postos_plu > 1) {
-                    for (iposto in 1:numero_postos_plu){
-                        postos_plu[postos_plu$nome == input$sub_bacia]$valor[iposto] <- as.numeric(future::value(par)$par[(16 + iposto)])
-                        shiny::updateNumericInput(session, paste0("posto_plu_", iposto), value = as.numeric(future::value(par)$par[(16 + iposto)]))
-                    }
+                numero_postos_plu <- length(postos_plu[postos_plu$nome %in% input$sub_bacia, unique(posto)])
+                for (iposto in 1:numero_postos_plu){
+                    shiny::updateNumericInput(session, paste0("alfa_", iposto), value = as.numeric(future::value(par)$par[(14 + (iposto * 2) - 1)]))
+                    shiny::updateNumericInput(session, paste0("beta_", iposto), value = as.numeric(future::value(par)$par[(14 + (iposto * 2))]))
                 }
 
                 disable_button(FALSE)
@@ -836,16 +949,17 @@ executa_visualizador_calibracao <- function(){
             parametros$valor[parametros$parametro == "ktMin"] <- input$kt_min
             parametros$valor[parametros$parametro == "ktMax"] <- input$kt_max
 
-            kt <- cria_kt(input$kt_max, input$kt_min, input$alfa, input$beta)
-            parametros$valor[parametros$parametro %in% paste0("Kt", 2:-60)] <- kt
+            ###kt <- cria_kt(input$kt_max, input$kt_min, input$alfa, input$beta)
+            ###parametros$valor[parametros$parametro %in% paste0("Kt", 2:-60)] <- kt
 
             return(parametros)
         })
 
+##!!!!!!!!!!
         postos_plu_exportacao <- shiny::reactive({
             postos_plu <- postos_plu()
             postos_plu <- postos_plu[postos_plu$nome == input$sub_bacia]
-            numero_postos_plu <- nrow(postos_plu)
+            numero_postos_plu <- length(postos_plu[postos_plu$nome %in% input$sub_bacia, unique(posto)])
             if (numero_postos_plu > 1) {
                 for (iposto in 1:numero_postos_plu){
                     postos_plu[postos_plu$nome == input$sub_bacia]$valor[iposto] <- input[[paste0("posto_plu_", iposto)]]

@@ -194,8 +194,8 @@ le_postos_plu <- function(arq) {
 
     dat <- data.table::fread(arq)
 
-    if (any(colnames(dat) != c("nome", "posto", "valor"))) {
-        stop("o arquivos deve deve possuir colunas 'nome', 'posto' e 'valor'")
+    if (any(colnames(dat) != c("nome", "posto", "variavel", "valor"))) {
+        stop("o arquivos deve deve possuir colunas 'nome', 'posto', 'variavel' e 'valor'")
     }
 
     dat[, nome := tolower(nome)]

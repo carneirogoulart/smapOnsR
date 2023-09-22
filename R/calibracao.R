@@ -46,22 +46,33 @@
 funcao_objetivo_calibracao <- function(vetor_modelo, kt_min, kt_max, area, EbInic, TuInic, Supin, 
       precipitacao, evapotranspiracao, vazao, data_inicio_objetivo, data_fim_objetivo,
       postos_plu){
+  
+  soma_kt <- 0
+  numero_postos_plu <- postos_plu[, length(unique(posto))]
+  kt <- array(rep(0, 63 * numero_postos_plu), c(numero_postos_plu, 63))
+  for (iposto in 1:numero_postos_plu){
+    nome_posto <- postos_plu[, unique(posto)][iposto]
+    kt_max <- postos_plu[posto == nome_posto & variavel == "kt_max", valor]
+    kt_min <- postos_plu[posto == nome_posto & variavel == "kt_min", valor]
+    kt[iposto, ] <- cria_kt(kt_max, kt_min, vetor_modelo[14 + iposto * 2 - 1], vetor_modelo[14 + iposto * 2])
+    soma_kt <- soma_kt + kt[iposto, ]
+  }
+  soma_kt <- sum(soma_kt)
 
-  kt <- cria_kt(kt_max, kt_min, vetor_modelo[15], vetor_modelo[16])
+  precipitacao_ponderada <- 0
+  for (iposto in 1:numero_postos_plu){
+    nome_posto <- postos_plu[, unique(posto)][iposto]
+    kt_max <- postos_plu[posto == nome_posto & variavel == "kt_max", valor]
+    kt_min <- postos_plu[posto == nome_posto & variavel == "kt_min", valor]
+    kt[iposto, ] <- kt[iposto, ] / soma_kt
+    precipitacao_posto <- ponderacao_temporal(precipitacao[posto == nome_posto, valor], kt[iposto,], kt_max, kt_min)
+    precipitacao_ponderada <- precipitacao_ponderada + precipitacao_posto
+  }
 
+  precipitacao_ponderada <- precipitacao_ponderada  * vetor_modelo[12]
   numero_dias <- nrow(evapotranspiracao)
 
   inicializacao <- inicializacao_smap(vetor_modelo, area, EbInic, TuInic, Supin)
-  numero_postos_plu <- nrow(postos_plu)
-  if (numero_postos_plu > 1) {
-    vetor_modelo[17:(16 + numero_postos_plu)] <- vetor_modelo[17:(16 + numero_postos_plu)] / sum(vetor_modelo[17:(16 + numero_postos_plu)])
-    postos_plu$valor <- vetor_modelo[17:(16 + numero_postos_plu)]
-  }
-
-  precipitacao_ponderada <- ponderacao_espacial(precipitacao, postos_plu)
-  
-  precipitacao_ponderada[, valor := valor * vetor_modelo[12]]
-  precipitacao_ponderada <- ponderacao_temporal(precipitacao_ponderada[, valor], kt, kt_max, kt_min)
 
   evapotranspiracao_ponderada <- data.table::data.table(evapotranspiracao)
   evapotranspiracao_ponderada[, valor := valor * vetor_modelo[13]]
@@ -100,7 +111,7 @@ cria_kt <- function(kt_max, kt_min, alfa, beta){
   aux <- stats::dbeta(quantis, shape1 = alfa, shape2 = beta)
 
   kt <- rep(0, 63)
-  kt[(3 - kt_max):(3 + kt_min)] <- aux / sum(aux)
+  kt[(3 - kt_max):(3 + kt_min)] <- aux
 
   kt
 }
@@ -176,8 +187,6 @@ calibracao <- function(vetor_modelo, kt_min, kt_max, area, EbInic, TuInic, Supin
               control = list(fnscale = 1))
   
   numero_postos_plu <- nrow(postos_plu)
-  if (numero_postos_plu > 1) {
-    ajuste$par[17:(16 + numero_postos_plu)] <- ajuste$par[17:(16 + numero_postos_plu)] / sum(ajuste$par[17:(16 + numero_postos_plu)])
-  }
+  
   ajuste
 }
